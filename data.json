@@ -1,0 +1,13 @@
+{
+    "todos": [{
+            "id": 1,
+            "title": "Welcome to our To-Do List",
+            "completed": false
+        },
+        {
+            "id": 2,
+            "title": "Made By Andy, Lucas L. and Mathias",
+            "completed": false
+        }
+    ]
+}
