@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import data from '../data.json';
+//import data from '../data.json';
+import axios from 'axios';
 
 export const ADD_TODO = 'ADD_TODO';
 export const DELETE_TODO = 'DELETE_TODO';
@@ -31,19 +32,30 @@ export const deleteTodo = (id) => async (dispatch) => {
 };
 
 export const loadTodos = () => async (dispatch) => {
-  const todos = JSON.parse(await AsyncStorage.getItem('todos')) || [];
-  if(!todos || todos.length === 0) {
-    dispatch({
+    const storedTodos = JSON.parse(await AsyncStorage.getItem('todos'));
+  
+    if (storedTodos && storedTodos.length > 0) {
+      // If there are saved todos in AsyncStorage, load them
+      dispatch({
         type: LOAD_TODOS,
-        payload: data.todos,
-    });
-    await AsyncStorage.setItem('todos', JSON.stringify(data.todos));
-  } else  {
-    dispatch({
-        type: LOAD_TODOS,
-        payload: todos,
-    });
-  }
+        payload: storedTodos,
+      });
+    } else {
+      // If there are no saved todos in AsyncStorage, fetch the data from an API and store it in AsyncStorage
+      try {
+        const response = await axios.get('https://raw.githubusercontent.com/GonzalesAndy/TodoNative/main/data.json?token=GHSAT0AAAAAAB47VFKYK44VMIHF4JZDCT7AZBNV2NQ');
+        const fetchedTodos = response.data.todos;
+  
+        dispatch({
+          type: LOAD_TODOS,
+          payload: fetchedTodos,
+        });
+  
+        await AsyncStorage.setItem('todos', JSON.stringify(fetchedTodos));
+      } catch (error) {
+        console.log(error);
+      }
+    }
 };
 
 export const toggleTodo = (id) => async (dispatch) => {
