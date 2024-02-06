@@ -1,1 +1,1 @@
-To do app in React
+To do app in React native
